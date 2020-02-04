@@ -107,7 +107,7 @@ carlsonRJ' err x y z p =
         f' / a / sqrt a + 6 * sum h
   where
     zeros = sum (map (\u -> fromEnum (u == 0)) [x,y,z,p])
-    atanx_over_x w = if w == 0 then 1 else atan w / w
+    atanx_over_x w = if w == 0 then 1 else atanC w / w
 
 carlsonRJ :: Cplx -> Cplx -> Cplx -> Cplx -> Cplx
 carlsonRJ = carlsonRJ' 1e-15
