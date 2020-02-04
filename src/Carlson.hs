@@ -1,12 +1,7 @@
 module Carlson
   where
-import Data.Maybe
 import Data.Complex
-
-type Cplx = Complex Double
-
-toCplx :: Double -> Cplx
-toCplx x = x :+ 0.0
+import Internal
 
 rf_ :: Cplx -> Cplx -> Cplx -> Double -> ((Double,Double,Double), Cplx)
 rf_ x y z err =
