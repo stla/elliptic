@@ -7,9 +7,9 @@ import Internal
 getPhiK :: Cplx -> (Cplx, Int)
 getPhiK phi
   | realPart phi > pi/2 =
-    until (\(phi,_) -> realPart phi <= pi/2) (\(phi,k) -> (phi-pi,k+1)) (phi,0)
+    until (\(x,_) -> realPart x <= pi/2) (\(x,k) -> (x-pi,k+1)) (phi,0)
   | realPart phi < -pi/2 =
-    until (\(phi,_) -> realPart phi >= -pi/2) (\(phi,k) -> (phi+pi,k-1)) (phi,0)
+    until (\(x,_) -> realPart x >= -pi/2) (\(x,k) -> (x+pi,k-1)) (phi,0)
   | otherwise = (phi,0)
 
 ellipticF' :: Double -> Cplx -> Cplx -> Cplx
