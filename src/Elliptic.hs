@@ -34,4 +34,25 @@ ellipticF' err phi m
     2 * fromIntegral k * ellipticF' err (pi/2) m + ellipticF' err phi' m
 
 ellipticF :: Cplx -> Cplx -> Cplx
-ellipticF = ellipticF' 1e-15 
+ellipticF = ellipticF' 1e-15
+
+ellipticE' :: Double -> Cplx -> Cplx -> Cplx
+ellipticE' err phi m
+  | phi == 0 =
+    toCplx 0
+  | abs(realPart phi) <= pi/2 =
+    case m of
+      0 -> phi
+      1 -> sin phi
+      _ ->
+        let sine = sin phi in
+        let sine2 = sine*sine in
+        let (cosine2, oneminusmsine2) = (1 - sine2, 1 - m*sine2) in
+        sine * (carlsonRF' err cosine2 oneminusmsine2 1 -
+          m * sine2 / 3 * carlsonRD' err cosine2 oneminusmsine2 1)
+  | otherwise =
+    let (phi', k) = getPhiK phi in
+    2 * fromIntegral k * ellipticE' err (pi/2) m + ellipticE' err phi' m
+
+ellipticE :: Cplx -> Cplx -> Cplx
+ellipticE = ellipticE' 1e-15
