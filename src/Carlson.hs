@@ -1,4 +1,5 @@
 module Carlson
+  (carlsonRF, carlsonRF', carlsonRD, carlsonRD', carlsonRJ, carlsonRJ')
   where
 import Data.Complex
 import Internal

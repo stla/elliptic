@@ -4,14 +4,6 @@ import Carlson
 import Data.Complex
 import Internal
 
-getPhiK :: Cplx -> (Cplx, Int)
-getPhiK phi
-  | realPart phi > pi/2 =
-    until (\(x,_) -> realPart x <= pi/2) (\(x,k) -> (x-pi,k+1)) (phi,0)
-  | realPart phi < -pi/2 =
-    until (\(x,_) -> realPart x >= -pi/2) (\(x,k) -> (x+pi,k-1)) (phi,0)
-  | otherwise = (phi,0)
-
 ellipticF' :: Double -> Cplx -> Cplx -> Cplx
 ellipticF' err phi m
   | phi == 0 =
@@ -56,3 +48,28 @@ ellipticE' err phi m
 
 ellipticE :: Cplx -> Cplx -> Cplx
 ellipticE = ellipticE' 1e-15
+
+ellipticPI' :: Double -> Cplx -> Cplx -> Cplx -> Cplx
+ellipticPI' err phi n m
+  | phi == 0 =
+    toCplx 0
+  | phi == pi/2 && n == 1 =
+    0/0
+  | phi == pi/2 && m == 0 =
+    pi/2/sqrt(1-n)
+  | phi == pi/2 && m == n =
+    ellipticE' err (pi/2) m / (1-m)
+  | phi == pi/2 && n == 0 =
+    ellipticF' err (pi/2) m
+  | abs(realPart phi) <= pi/2 =
+    let sine = sin phi in
+    let sine2 = sine*sine in
+    let (cosine2, oneminusmsine2) = (1 - sine2, 1 - m*sine2) in
+    sine * (carlsonRF' err cosine2 oneminusmsine2 1 +
+      n * sine2 / 3 * carlsonRJ' err cosine2 oneminusmsine2 1 (1-n*sine2))
+  | otherwise =
+    let (phi', k) = getPhiK phi in
+    2 * fromIntegral k * ellipticPI' err (pi/2) n m + ellipticPI' err phi' n m
+
+ellipticPI :: Cplx -> Cplx -> Cplx -> Cplx
+ellipticPI = ellipticPI' 1e-15
