@@ -61,3 +61,53 @@ carlsonRD' err x y z =
 
 carlsonRD :: Cplx -> Cplx -> Cplx -> Cplx
 carlsonRD = carlsonRD' 1e-15
+
+rj_ :: Cplx -> Cplx -> Cplx -> Cplx -> Cplx -> Double -> Cplx -> Int ->
+       Double -> [Cplx] -> [Cplx] -> Double -> (Cplx, Int, [Cplx], [Cplx])
+rj_ x y z p a maxmagns delta f fac d e err =
+  let q = (4/err)**(1/6) * maxmagns / fromIntegral f in
+  if magnitude a > q
+    then (a, f, d, e)
+    else
+      let dnew = (sqrt p + sqrt x)*(sqrt p + sqrt y)*(sqrt p + sqrt z)
+          d' = (fromIntegral f * dnew) : d
+          e' = (toCplx fac * delta / dnew / dnew) : e
+          lambda = sqrt x * sqrt y + sqrt y * sqrt z + sqrt z * sqrt x
+          x' = (x + lambda) / 4
+          y' = (y + lambda) / 4
+          z' = (z + lambda) / 4
+          p' = (p + lambda) / 4
+          a' = (a + lambda) / 4
+      in
+      rj_ x' y' z' p' a' maxmagns delta (4*f) (fac/64) d' e' err
+
+carlsonRJ' :: Double -> Cplx -> Cplx -> Cplx -> Cplx -> Cplx
+carlsonRJ' err x y z p =
+  if zeros > 1
+    then error "At most one of x, y, z, p can be 0"
+    else
+      let a0 = (x + y + z + p + p) / 5
+          maxmagns = maximum $ map (\u -> magnitude(a0-u)) [x, y, z, p]
+          delta = (p-x)*(p-y)*(p-z)
+      in
+      let (a, f, d, e) = rj_ x y z p a0 maxmagns delta 1 1 [] [] err
+          f' = fromIntegral f
+      in
+      let x' = (a0 - x) / f' / a
+          y' = (a0 - y) / f' / a
+          z' = (a0 - z) / f' / a
+          p' = -(x'+y'+z') / 2
+          e2 = x'*y' + x'*z' + y'*z' - 3*p'*p'
+          e3 = x'*y'*z' + 2*e2*p' + 4*p'*p'*p'
+          e4 = p'*(2*x'*y'*z' + e2*p' + 3*p'*p'*p')
+          e5 = x'*y'*z'*p'*p'
+          h = zipWith (\u v -> atanx_over_x(sqrt u) / v) e d
+      in
+      (1 - 3*e2/14 + e3/6 + 9*e2*e2/88 - 3*e4/22 - 9*e2*e3/52 + 3*e5/26) /
+        f' / a / sqrt a + 6 * sum h
+  where
+    zeros = sum (map (\u -> fromEnum (u == 0)) [x,y,z,p])
+    atanx_over_x w = if w == 0 then 1 else atan w / w
+
+carlsonRJ :: Cplx -> Cplx -> Cplx -> Cplx -> Cplx
+carlsonRJ = carlsonRJ' 1e-15
