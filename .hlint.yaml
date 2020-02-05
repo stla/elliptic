@@ -3,3 +3,4 @@
 - ignore: {name: "Use head"}
 - ignore: {name: "Reduce duplication"}
 - ignore: {name: "Use camelCase"}
+- ignore: {name: "Use guards"}

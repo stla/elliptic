@@ -2,7 +2,8 @@ module Carlson
   (carlsonRF, carlsonRF',
   carlsonRD, carlsonRD',
   carlsonRJ, carlsonRJ',
-  carlsonRC', carlsonRC)
+  carlsonRC, carlsonRC',
+  carlsonRG, carlsonRG')
   where
 import           Data.Complex
 import           Internal
@@ -147,3 +148,21 @@ carlsonRC' err x y =
 
 carlsonRC :: Cplx -> Cplx -> Cplx
 carlsonRC = carlsonRC' 1e-15
+
+
+carlsonRG' :: Double -> Cplx -> Cplx -> Cplx -> Cplx
+carlsonRG' err x y z =
+  if zeros > 1
+    then error "At most one of x, y, z can be 0"
+    else
+      if z == 0
+        then carlsonRG' err z x y
+        else
+          (z * carlsonRF' err x y z -
+            (x-z) * (y-z) * carlsonRD' err x y z / 3 +
+            sqrt x * sqrt y / sqrt z) / 2
+  where
+    zeros = sum (map (\u -> fromEnum (u == 0)) [x,y,z])
+
+carlsonRG :: Cplx -> Cplx -> Cplx -> Cplx
+carlsonRG = carlsonRG' 1e-15
