@@ -113,6 +113,12 @@ main = defaultMain $
       let m = 2 :+ (-3)
       assertEqual ""
         (approx 14 (ellipticE (pi/2) m))
-        (approx 14 ((1-m) * (carlsonRD 0 (1-m) 1 + carlsonRD 0 1 (1-m)) / 3))
+        (approx 14 ((1-m) * (carlsonRD 0 (1-m) 1 + carlsonRD 0 1 (1-m)) / 3)),
+
+    testCase "jacobiZeta m=1" $ do
+      let z = (-1) :+ 8
+      assertEqual ""
+        (approx 14 (jacobiZeta z 1))
+        (approx 14 (sin z))
 
   ]
