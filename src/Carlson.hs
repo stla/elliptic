@@ -1,8 +1,11 @@
 module Carlson
-  (carlsonRF, carlsonRF', carlsonRD, carlsonRD', carlsonRJ, carlsonRJ')
+  (carlsonRF, carlsonRF',
+  carlsonRD, carlsonRD',
+  carlsonRJ, carlsonRJ',
+  carlsonRC', carlsonRC)
   where
-import Data.Complex
-import Internal
+import           Data.Complex
+import           Internal
 
 rf_ :: Cplx -> Cplx -> Cplx -> Double -> ((Double,Double,Double), Cplx)
 rf_ x y z err =
@@ -112,3 +115,35 @@ carlsonRJ' err x y z p =
 
 carlsonRJ :: Cplx -> Cplx -> Cplx -> Cplx -> Cplx
 carlsonRJ = carlsonRJ' 1e-15
+
+
+rc_ :: Cplx -> Cplx -> Cplx -> Double -> Int -> Double -> (Cplx, Int)
+rc_ x y a magn f err =
+  let q = (1/3/err)**(1/8) * magn / fromIntegral f in
+  if magnitude a > q
+    then (a, f)
+    else
+      let lambda = 2 * sqrt x * sqrt y + y
+          a' = (a + lambda) / 4
+          x' = (x + lambda) / 4
+          y' = (y + lambda) / 4
+      in
+      rc_ x' y' a' magn (4*f) err
+
+carlsonRC' :: Double -> Cplx -> Cplx -> Cplx
+carlsonRC' err x y =
+  if y == 0
+    then error "y cannot be 0"
+    else
+      let a0 = (x + y + y) / 3
+          magn = magnitude(a0-x)
+      in
+      let (a, f) = rc_ x y a0 magn 1 err
+          f' = fromIntegral f
+      in
+      let s = (y - a0) / f' / a in
+      (1 + 3*s*s/10 + s*s*s/7 + 3*s*s*s*s/8 + 9*s*s*s*s*s/22 +
+        159*s*s*s*s*s*s/208 + 9*s*s*s*s*s*s*s/8) / sqrt a
+
+carlsonRC :: Cplx -> Cplx -> Cplx
+carlsonRC = carlsonRC' 1e-15
