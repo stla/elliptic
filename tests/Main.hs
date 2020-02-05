@@ -70,7 +70,49 @@ main = defaultMain $
     testCase "RC value 5" $
       assertEqual ""
         (approx 14 (carlsonRC 0.25 (-2)))
-        (approx 14 ((log 2 :+ (-pi))/ 3))
+        (approx 14 ((log 2 :+ (-pi))/ 3)),
 
+    testCase "RC x y = RF x y y" $ do
+      let x = 5 :+ 6
+          y = 2 :+ (-9)
+      assertEqual ""
+        (approx 14 (carlsonRC x y))
+        (approx 14 (carlsonRF x y y)),
+
+    testCase "RJ x y y p" $ do
+      let x = 1 :+ 1
+          y = (-2) :+ 3
+          p = 0 :+ 4
+      assertEqual ""
+        (approx 14 (carlsonRJ x y y p))
+        (approx 14 (3*(carlsonRC x y - carlsonRC x p) / (p-y))),
+
+    testCase "RJ homogeneity" $ do
+      let x = 1 :+ 1
+          y = (-2) :+ 3
+          z = -3
+          p = 0 :+ 4
+          kappa = 2 :+ 0
+      assertEqual ""
+        (approx 14 (carlsonRJ x y z p / kappa / sqrt kappa))
+        (approx 14 (carlsonRJ (kappa*x) (kappa*y) (kappa*z) (kappa*p))),
+
+    testCase "Complete elliptic integral K" $ do
+      let m = 2 :+ (-3)
+      assertEqual ""
+        (approx 14 (ellipticF (pi/2) m))
+        (approx 14 (carlsonRF 0 (1-m) 1)),
+
+    testCase "Complete ellipticE - RG" $ do
+      let m = 2 :+ (-3)
+      assertEqual ""
+        (approx 14 (ellipticE (pi/2) m))
+        (approx 14 (2 * carlsonRG 0 (1-m) 1)),
+
+    testCase "Complete ellipticE - RD" $ do
+      let m = 2 :+ (-3)
+      assertEqual ""
+        (approx 14 (ellipticE (pi/2) m))
+        (approx 14 ((1-m) * (carlsonRD 0 (1-m) 1 + carlsonRD 0 1 (1-m)) / 3))
 
   ]
