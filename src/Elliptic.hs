@@ -73,3 +73,18 @@ ellipticPI' err phi n m
 
 ellipticPI :: Cplx -> Cplx -> Cplx -> Cplx
 ellipticPI = ellipticPI' 1e-15
+
+jacobiZeta' :: Double -> Cplx -> Cplx -> Cplx
+jacobiZeta' err phi m =
+  if m == 1
+    then
+      if abs(realPart phi) <= pi/2
+        then sin phi
+        else let (phi',_) = getPhiK phi in sin phi'
+    else
+      ellipticE' err phi m -
+        ellipticE' err (pi/2) m / ellipticF' err (pi/2) m *
+        ellipticF' err phi m
+
+jacobiZeta :: Cplx -> Cplx -> Cplx
+jacobiZeta = jacobiZeta' 1e-15
