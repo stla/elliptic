@@ -45,7 +45,32 @@ main = defaultMain $
     testCase "RF value 7" $
       assertEqual ""
         (approx 13 (carlsonRF (i-1) i (1-i)))
-        (approx 13 (0.93912050218619 :+ (-0.53296252018635)))
+        (approx 13 (0.93912050218619 :+ (-0.53296252018635))),
+
+    testCase "RC value 1" $
+      assertEqual ""
+        (approx 14 (carlsonRC 0 0.25))
+        (approx 14 pi),
+
+    testCase "RC value 2" $
+      assertEqual ""
+        (approx 14 (carlsonRC 2.25 2))
+        (approx 14 (log 2)),
+
+    testCase "RC value 3" $
+      assertEqual ""
+        (approx 12 (carlsonRC 0 i))
+        (approx 12 ((1-i)*1.1107207345396)),
+
+    testCase "RC value 4" $
+      assertEqual ""
+        (approx 13 (carlsonRC (-i) i))
+        (approx 13 (1.2260849569072 :+ (-0.34471136988768))),
+
+    testCase "RC value 5" $
+      assertEqual ""
+        (approx 14 (carlsonRC 0.25 (-2)))
+        (approx 14 ((log 2 :+ (-pi))/ 3))
 
 
   ]
