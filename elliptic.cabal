@@ -1,14 +1,14 @@
 name:                elliptic
 version:             0.1.0.0
--- synopsis:
--- description:
-homepage:            https://github.com/githubuser/elliptic#readme
+synopsis:            Carlson Elliptic Integrals and Incomplete Elliptic Integrals
+description:         Evaluation of the Carlson elliptic integrals and the incomplete elliptic integrals with complex arguments.
+homepage:            https://github.com/stla/elliptic#readme
 license:             BSD3
 license-file:        LICENSE
-author:              Author name here
-maintainer:          example@example.com
-copyright:           2020 Author name here
-category:            Web
+author:              Stéphane Laurent
+maintainer:          laurent_step@outlook.fr
+copyright:           2020 Stéphane Laurent
+category:            Maths
 build-type:          Simple
 extra-source-files:  README.md
 cabal-version:       >=1.10
@@ -35,4 +35,4 @@ test-suite unit-tests
 
 source-repository head
   type:     git
-  location: https://github.com/githubuser/elliptic
+  location: https://github.com/stla/elliptic
