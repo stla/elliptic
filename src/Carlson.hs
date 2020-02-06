@@ -153,7 +153,7 @@ carlsonRC = carlsonRC' 1e-15
 carlsonRG' :: Double -> Cplx -> Cplx -> Cplx -> Cplx
 carlsonRG' err x y z =
   if zeros > 1
-    then error "At most one of x, y, z can be 0"
+    then sqrt(x+y+z) / 2
     else
       if z == 0
         then carlsonRG' err z x y
